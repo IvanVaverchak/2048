@@ -19,6 +19,20 @@ let field = [
   [0, 0, 0, 0],
 ];
 
+let cellsBeforeMove;
+
+function checkIfMoveOccurred() {
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      if (field[row][col] !== cellsBeforeMove[row][col]) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 startBtn.addEventListener('click', () => {
   field = [
     [0, 0, 0, 0],
@@ -42,26 +56,29 @@ startBtn.addEventListener('click', () => {
 });
 
 document.addEventListener('keyup', type => {
+  cellsBeforeMove = JSON.parse(JSON.stringify(field));
+
   switch (startBtn.classList.contains('restart')) {
     case type.code === 'ArrowLeft':
       moveLeft();
-      setNewCell();
+
       break;
 
     case type.code === 'ArrowRight':
       moveRight();
-      setNewCell();
       break;
 
     case type.code === 'ArrowUp':
       moveUp();
-      setNewCell();
       break;
 
     case type.code === 'ArrowDown':
       moveDown();
-      setNewCell();
       break;
+  }
+
+  if (checkIfMoveOccurred()) {
+    setNewCell();
   }
 
   if (!checkIfPossible()) {
@@ -106,7 +123,7 @@ function checkIfEmpty() {
 }
 
 function setNewCell() {
-  if (!checkIfEmpty()) {
+  if (!checkIfEmpty() || !checkIfPossible()) {
     return;
   }
 
